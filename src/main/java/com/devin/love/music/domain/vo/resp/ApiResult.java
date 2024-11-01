@@ -18,6 +18,7 @@ public class ApiResult<T> {
     private Boolean isSuccess;
     private Integer errCode;
     private String errMsg;
+    private Options options;
     private T data;
 
     /**
@@ -40,12 +41,13 @@ public class ApiResult<T> {
      * @return
      * @param <T>
      */
-    public static <T> ApiResult<T> success(T data) {
+    public static <T> ApiResult<T> success(T data, Options options) {
         ApiResult<T> result = new ApiResult<>();
         result.setIsSuccess(Boolean.TRUE);
         result.setErrCode(null);
         result.setErrMsg(null);
         result.setData(data);
+        result.setOptions(options);
         return result;
     }
 
@@ -78,5 +80,21 @@ public class ApiResult<T> {
         result.setErrMsg(errorEnum.getErrMsg());
         result.setData(null);
         return result;
+    }
+
+    /**
+     * 额外选项
+     */
+    @Data
+    public static class Options {
+        private String message;
+        private String type;
+
+        public static Options of(String message, String type) {
+            Options options = new Options();
+            options.setMessage(message);
+            options.setType(type);
+            return options;
+        }
     }
 }

@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 @AllArgsConstructor
 public enum HttpErrorEnum {
     SYS_ERROR(500, "系统错误"),
+    ACCESS_DENIED(401, "登录失效"),
     ;
 
     private final Integer errCode;

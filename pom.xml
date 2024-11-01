@@ -19,8 +19,10 @@
         <mysql.version>8.0.33</mysql.version>
         <mybatis.version>2.3.2</mybatis.version>
         <mybatis-plus.version>3.5.1</mybatis-plus.version>
-        <druid.version>1.1.10</druid.version>
+<!--        <druid.version>1.1.10</druid.version>-->
+        <druid.version>1.2.21</druid.version>
         <hutool.version>5.8.26</hutool.version>
+        <jwt.version>3.19.0</jwt.version>
     </properties>
 
     <dependencies>
@@ -40,6 +42,11 @@
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
+        </dependency>
+        <!-- redis -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
         <!-- lombok -->
         <dependency>
@@ -74,10 +81,27 @@
         </dependency>
 
         <!-- druid连接池 -->
+<!--        <dependency>-->
+<!--            <groupId>com.alibaba</groupId>-->
+<!--            <artifactId>druid-spring-boot-starter</artifactId>-->
+<!--            <version>${druid.version}</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>com.alibaba</groupId>
-            <artifactId>druid-spring-boot-starter</artifactId>
+            <artifactId>druid-spring-boot-3-starter</artifactId>
             <version>${druid.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
         </dependency>
 
         <!-- 校验依赖 -->
@@ -86,10 +110,18 @@
             <artifactId>validation-api</artifactId>
         </dependency>
 
+        <!-- hutool工具 -->
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
             <version>${hutool.version}</version>
+        </dependency>
+
+        <!-- jwt认证 -->
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>${jwt.version}</version>
         </dependency>
     </dependencies>
 

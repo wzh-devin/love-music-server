@@ -10,6 +10,6 @@ package com.devin.love.music.common.constant;
  * @version 1.0
  * @since 1.0
  */
-public class VersionConstant {
+public class Version {
     public static final String V1 = "/api/v1";
 }

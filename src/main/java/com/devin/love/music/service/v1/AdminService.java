@@ -1,7 +1,6 @@
 package com.devin.love.music.service.v1;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.devin.love.music.domain.entity.Admin;
+import com.devin.love.music.domain.vo.req.LoginReq;
 
 /**
  * 2024/11/1 17:47
@@ -12,4 +11,11 @@ import com.devin.love.music.domain.entity.Admin;
  * @since 1.0
  */
 public interface AdminService {
+
+    /**
+     * 登录验证
+     * @param loginReq
+     * @return
+     */
+    String login(LoginReq loginReq);
 }
