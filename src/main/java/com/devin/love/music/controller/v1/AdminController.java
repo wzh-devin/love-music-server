@@ -1,14 +1,14 @@
 package com.devin.love.music.controller.v1;
 
 import com.devin.love.music.common.annotation.ApiV1;
+import com.devin.love.music.domain.entity.Admin;
 import com.devin.love.music.domain.vo.req.LoginReq;
 import com.devin.love.music.domain.vo.resp.ApiResult;
 import com.devin.love.music.service.v1.AdminService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 2024/11/1 17:12
@@ -30,6 +30,7 @@ public class AdminController {
 
     /**
      * 登录接口
+     *
      * @param loginReq
      * @return
      */
@@ -37,5 +38,15 @@ public class AdminController {
     public ApiResult<String> login(@RequestBody LoginReq loginReq) {
         String token = adminService.login(loginReq);
         return ApiResult.success(token, null);
+    }
+
+    /**
+     * TODO 测试方法，获取用户信息
+     *
+     * @return
+     */
+    @GetMapping("/list")
+    public ApiResult<List<Admin>> getAdminList() {
+        return ApiResult.success(adminService.getAdminList(), null);
     }
 }

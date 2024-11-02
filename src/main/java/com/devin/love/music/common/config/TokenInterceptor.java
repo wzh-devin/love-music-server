@@ -2,6 +2,7 @@ package com.devin.love.music.common.config;
 
 import com.alibaba.druid.util.StringUtils;
 import com.devin.love.music.common.enums.HttpErrorEnum;
+import com.devin.love.music.common.enums.HttpMethodEnum;
 import com.devin.love.music.common.utils.JwtUtil;
 import io.netty.util.internal.StringUtil;
 import lombok.RequiredArgsConstructor;
@@ -35,8 +36,15 @@ public class TokenInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        StringBuffer requestURI = request.getRequestURL();
-        log.info("requestURI: {}", requestURI.toString());
+        // 对浏览器的请求预检策略进行处理
+        if (HttpMethodEnum.OPTIONS.toString().equals(request.getMethod())) {
+            response.setHeader("Access-Control-Allow-Origin", request.getHeader("origin"));
+            response.setHeader("Access-Control-Allow-Credentials", "true");
+            response.setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS");
+            response.setHeader("Access-Control-Max-Age", "1800");
+            response.setHeader("Access-Control-Allow-Headers", "Authorization");
+            return false;
+        }
 
         String token = getToken(request);
 

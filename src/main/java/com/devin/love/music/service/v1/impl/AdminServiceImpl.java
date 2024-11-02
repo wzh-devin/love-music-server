@@ -1,5 +1,6 @@
 package com.devin.love.music.service.v1.impl;
 
+import cn.hutool.crypto.digest.MD5;
 import com.devin.love.music.common.constant.RedisKey;
 import com.devin.love.music.common.domain.dto.RequestInfo;
 import com.devin.love.music.common.utils.JwtUtil;
@@ -12,6 +13,7 @@ import com.devin.love.music.service.v1.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -36,13 +38,8 @@ public class AdminServiceImpl implements AdminService {
             // 没有用户，需要通知注册
             return null;
         }
-        // TODO 进行MD5加密
-//        String signPwd = MD5.create().digestHex16(loginReq.getPassword().getBytes());
-//        if (!signPwd.equals(admin.getPassword())) {
-//            // 密码错误
-//            return null;
-//        }
-        if (loginReq.getPassword().equals(admin.getPassword())) {
+        String signPwd = MD5.create().digestHex(loginReq.getPassword().getBytes());
+        if (!signPwd.equals(admin.getPassword())) {
             // 密码错误
             return null;
         }
@@ -54,5 +51,11 @@ public class AdminServiceImpl implements AdminService {
         RedisUtil.set(RedisKey.getKey(RedisKey.ADMIN_INFO_STRING, admin.getId()), admin);
 
         return token;
+    }
+
+
+    @Override
+    public List<Admin> getAdminList() {
+        return adminDao.selectAdminAll();
     }
 }

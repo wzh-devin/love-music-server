@@ -4,7 +4,7 @@ spring:
   application:
     name: love-music
   profiles:
-    active: dev # ??????
+    active: dev
   datasource:
     druid:
       driver-class-name: com.mysql.cj.jdbc.Driver
@@ -17,8 +17,20 @@ spring:
     port: ${love-music.redis.port}
     password: ${love-music.redis.password}
 
-mybatis-plus:
-  mapper-locations: classpath:mapper/*.xml
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-prefix: money
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath:mapper/v1/*.xml
+
+# logging level print
+logging:
+  level:
+    root: info
+    com.devin.love.music.mapper*: debug
+    org.springframework.jdbc.core: debug
+    com.alibaba.druid: debug
 
 jwt:
   secret: ${love-music.jwt.secret}

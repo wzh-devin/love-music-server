@@ -6,6 +6,8 @@ import com.devin.love.music.domain.vo.req.LoginReq;
 import com.devin.love.music.mapper.v1.AdminMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * 2024/11/1 17:50
  * <p></p>
@@ -26,5 +28,14 @@ public class AdminDao extends ServiceImpl<AdminMapper, Admin> {
         return lambdaQuery()
                 .eq(Admin::getUsername, loginReq.getUsername())
                 .one();
+    }
+
+    /**
+     * 获取所有用户
+     * @return
+     */
+    public List<Admin> selectAdminAll() {
+        return lambdaQuery()
+                .list();
     }
 }

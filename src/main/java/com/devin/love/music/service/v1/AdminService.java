@@ -1,6 +1,9 @@
 package com.devin.love.music.service.v1;
 
+import com.devin.love.music.domain.entity.Admin;
 import com.devin.love.music.domain.vo.req.LoginReq;
+
+import java.util.List;
 
 /**
  * 2024/11/1 17:47
@@ -18,4 +21,6 @@ public interface AdminService {
      * @return
      */
     String login(LoginReq loginReq);
+
+    List<Admin> getAdminList();
 }
