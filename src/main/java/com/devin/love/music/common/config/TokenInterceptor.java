@@ -3,6 +3,8 @@ package com.devin.love.music.common.config;
 import com.alibaba.druid.util.StringUtils;
 import com.devin.love.music.common.enums.HttpErrorEnum;
 import com.devin.love.music.common.enums.HttpMethodEnum;
+import com.devin.love.music.common.http.PreResponseHandler;
+import com.devin.love.music.common.properties.CrossHttpOptionsProperties;
 import com.devin.love.music.common.utils.JwtUtil;
 import io.netty.util.internal.StringUtil;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -31,6 +34,8 @@ public class TokenInterceptor implements HandlerInterceptor {
 
     private final JwtUtil jwtUtil;
 
+    private final PreResponseHandler preResponseHandler;
+
     public static final String AUTHORIZATION = "Authorization";
     public static final String AUTHORIZATION_SCHEMA = "Bearer ";
 
@@ -38,11 +43,8 @@ public class TokenInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 对浏览器的请求预检策略进行处理
         if (HttpMethodEnum.OPTIONS.toString().equals(request.getMethod())) {
-            response.setHeader("Access-Control-Allow-Origin", request.getHeader("origin"));
-            response.setHeader("Access-Control-Allow-Credentials", "true");
-            response.setHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS");
-            response.setHeader("Access-Control-Max-Age", "1800");
-            response.setHeader("Access-Control-Allow-Headers", "Authorization");
+            log.info(request.getMethod());
+            preResponseHandler.preCrossCheck(request, response);
             return false;
         }
 

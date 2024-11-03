@@ -3,10 +3,12 @@ package com.devin.love.music.common.enums;
 import cn.hutool.http.server.HttpServerRequest;
 import cn.hutool.http.server.HttpServerResponse;
 
+import java.util.Arrays;
+
 /**
  * 2024/11/2 23:49
  * <p>
- *     http请求方法枚举
+ * http请求方法枚举
  * </p>
  *
  * @author <a href="https://github.com/wzh-devin">devin</a>
@@ -15,8 +17,11 @@ import cn.hutool.http.server.HttpServerResponse;
  */
 public enum HttpMethodEnum {
     GET,
+    HEAD,
     POST,
     PUT,
     DELETE,
-    OPTIONS
+    CONNECT,
+    OPTIONS,
+    TRACE;
 }
