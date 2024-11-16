@@ -41,7 +41,7 @@ public class CrossHttpConfig {
         // 设置允许的方法
         crossHttpOptionsProperties.setAllowMethods(List.of(Arrays.toString(HttpMethodEnum.values())));
         // 配置允许的header
-        crossHttpOptionsProperties.setAllowHeaders(List.of("Authorization"));
+        crossHttpOptionsProperties.setAllowHeaders(List.of("Authorization", "Content-Type"));
         // 配置下次预检请求的有效期 ==> s
         crossHttpOptionsProperties.setAccessControlMaxAge(1800);
 
