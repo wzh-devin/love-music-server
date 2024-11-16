@@ -34,6 +34,8 @@ logging:
     com.devin.love.music.mapper*: debug
     org.springframework.jdbc.core: debug
     com.alibaba.druid: debug
+  file:
+    name: ./logs/love-music.log
 
 jwt:
   secret: ${love-music.jwt.secret}
