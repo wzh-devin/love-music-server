@@ -1,6 +1,7 @@
 package com.devin.love.music.controller.v1;
 
 import com.devin.love.music.common.annotation.ApiV1;
+import com.devin.love.music.common.annotation.Log;
 import com.devin.love.music.domain.vo.req.SingerReq;
 import com.devin.love.music.domain.vo.resp.ApiResult;
 import com.devin.love.music.domain.vo.resp.SingerInfoResp;
@@ -35,14 +36,16 @@ public class SingerController {
 
     private final SingerService singerService;
 
-    @ApiOperation("获取歌手列表")
     @GetMapping("/list")
+    @ApiOperation("获取歌手列表")
+    @Log(desc = "获取歌手列表", module = "歌手模块")
     public ApiResult<List<SingerInfoResp>> getSingerList() {
         return ApiResult.success(singerService.getSingerList(), null);
     }
 
-    @ApiOperation("新增歌手")
     @PostMapping("/add")
+    @ApiOperation("新增歌手")
+    @Log(desc = "新增歌手", module = "歌手模块")
     public ApiResult<Void> addSinger(@Valid @RequestBody SingerReq singerReq) {
         singerService.addSinger(singerReq);
         return ApiResult.success();
