@@ -22,7 +22,8 @@ public class ExcludePath {
                 "/webjars/**",
                 "/v2/**",
                 "/swagger-ui.html",
-                "/doc.html"
+                "/doc.html",
+                "/favicon.ico"
         };
     }
 }

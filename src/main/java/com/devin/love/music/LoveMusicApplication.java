@@ -7,7 +7,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @SpringBootApplication
 @MapperScan("com.devin.love.music.mapper")
-@EnableWebMvc // 开启spring校验
 public class LoveMusicApplication {
 
     public static void main(String[] args) {
