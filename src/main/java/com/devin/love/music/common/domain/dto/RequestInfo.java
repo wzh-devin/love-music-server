@@ -1,6 +1,7 @@
 package com.devin.love.music.common.domain.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -15,6 +16,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
+@Builder
 public class RequestInfo {
     private Long uid;
 }

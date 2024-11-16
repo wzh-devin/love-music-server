@@ -5,6 +5,8 @@ import com.devin.love.music.domain.entity.Admin;
 import com.devin.love.music.domain.vo.req.LoginReq;
 import com.devin.love.music.domain.vo.resp.ApiResult;
 import com.devin.love.music.service.v1.AdminService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,8 +22,10 @@ import java.util.List;
  * @version 1.0
  * @since 1.0
  */
-@RestController
+
 @ApiV1
+@RestController
+@Api(tags = "后台用户管理")
 @RequestMapping("/admin")
 @RequiredArgsConstructor
 public class AdminController {
@@ -34,19 +38,10 @@ public class AdminController {
      * @param loginReq
      * @return
      */
+    @ApiOperation("登录接口")
     @PostMapping("/login")
     public ApiResult<String> login(@RequestBody LoginReq loginReq) {
         String token = adminService.login(loginReq);
         return ApiResult.success(token, null);
-    }
-
-    /**
-     * TODO 测试方法，获取用户信息
-     *
-     * @return
-     */
-    @GetMapping("/list")
-    public ApiResult<List<Admin>> getAdminList() {
-        return ApiResult.success(adminService.getAdminList(), null);
     }
 }

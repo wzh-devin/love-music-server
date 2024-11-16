@@ -52,10 +52,4 @@ public class AdminServiceImpl implements AdminService {
 
         return token;
     }
-
-
-    @Override
-    public List<Admin> getAdminList() {
-        return adminDao.selectAdminAll();
-    }
 }

@@ -1,6 +1,8 @@
 package com.devin.love.music.domain.vo.resp;
 
 import com.devin.love.music.common.enums.HttpErrorEnum;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -14,11 +16,22 @@ import lombok.Data;
  * @since 1.0
  */
 @Data
+@ApiModel("基础返回体")
 public class ApiResult<T> {
+
+    @ApiModelProperty("是否返回成功")
     private Boolean isSuccess;
+
+    @ApiModelProperty("错误码")
     private Integer errCode;
+
+    @ApiModelProperty("错误信息")
     private String errMsg;
+
+    @ApiModelProperty("额外选项")
     private Options options;
+
+    @ApiModelProperty("返回对象")
     private T data;
 
     /**
@@ -86,8 +99,13 @@ public class ApiResult<T> {
      * 额外选项
      */
     @Data
+    @ApiModel("基础返回对象的额外选项")
     public static class Options {
+
+        @ApiModelProperty("额外信息")
         private String message;
+
+        @ApiModelProperty("额外类型")
         private String type;
 
         public static Options of(String message, String type) {

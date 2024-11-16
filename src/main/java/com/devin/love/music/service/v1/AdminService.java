@@ -21,6 +21,4 @@ public interface AdminService {
      * @return
      */
     String login(LoginReq loginReq);
-
-    List<Admin> getAdminList();
 }
