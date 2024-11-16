@@ -1,11 +1,13 @@
 package com.devin.love.music.common.config;
 
 import com.alibaba.druid.util.StringUtils;
+import com.devin.love.music.common.domain.dto.RequestInfo;
 import com.devin.love.music.common.enums.HttpErrorEnum;
 import com.devin.love.music.common.enums.HttpMethodEnum;
 import com.devin.love.music.common.http.PreResponseHandler;
 import com.devin.love.music.common.properties.CrossHttpOptionsProperties;
 import com.devin.love.music.common.utils.JwtUtil;
+import com.devin.love.music.common.utils.RequestContext;
 import io.netty.util.internal.StringUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +17,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -43,21 +46,26 @@ public class TokenInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 对浏览器的请求预检策略进行处理
         if (HttpMethodEnum.OPTIONS.toString().equals(request.getMethod())) {
-            log.info(request.getMethod());
             preResponseHandler.preCrossCheck(request, response);
             return false;
         }
 
+        // 获取token
         String token = getToken(request);
 
-        // 如果没有token，则先进行登录
-        if (StringUtils.isEmpty(token)) {
-            // 请求拦截，发送给前端
+        // 校验token
+        Long uid = jwtUtil.getUidOrNull(token);
+
+        // 登录失效，重新登录
+        if (Objects.isNull(uid)) {
+            // 请求拦截，发送前端
             HttpErrorEnum.ACCESS_DENIED.sendHttpError(response);
             return false;
         }
 
-        // TODO 进行token校验
+        // 将uid设置到RequestContext中
+        RequestContext.set(RequestInfo.builder().uid(uid).build());
+
         return true;
     }
 
