@@ -8,7 +8,7 @@ spring:
   datasource:
     druid:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://${love-music.mysql.host}:${love-music.mysql.port}/${love-music.mysql.db}
+      url: jdbc:mysql://${love-music.mysql.host}:${love-music.mysql.port}/${love-music.mysql.db}?serverTimezone=UTC
       username: ${love-music.mysql.username}
       password: ${love-music.mysql.password}
   redis:
