@@ -5,6 +5,9 @@ spring:
     name: love-music
   profiles:
     active: dev
+  devtools:
+    restart:
+      enabled: false # close spring devtools restart
   datasource:
     druid:
       driver-class-name: com.mysql.cj.jdbc.Driver

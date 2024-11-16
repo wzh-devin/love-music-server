@@ -26,6 +26,7 @@ import java.io.IOException;
 public enum HttpErrorEnum {
     SYS_ERROR(500, "系统错误"),
     ACCESS_DENIED(401, "登录失效"),
+    INVALID_ERROR(400, "参数校验异常"),
     ;
 
     private final Integer errCode;

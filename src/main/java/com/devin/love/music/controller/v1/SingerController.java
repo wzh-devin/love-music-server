@@ -1,6 +1,7 @@
 package com.devin.love.music.controller.v1;
 
 import com.devin.love.music.common.annotation.ApiV1;
+import com.devin.love.music.domain.vo.req.SingerReq;
 import com.devin.love.music.domain.vo.resp.ApiResult;
 import com.devin.love.music.domain.vo.resp.SingerInfoResp;
 import com.devin.love.music.service.v1.SingerService;
@@ -8,10 +9,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -38,5 +39,12 @@ public class SingerController {
     @GetMapping("/list")
     public ApiResult<List<SingerInfoResp>> getSingerList() {
         return ApiResult.success(singerService.getSingerList(), null);
+    }
+
+    @ApiOperation("新增歌手")
+    @PostMapping("/add")
+    public ApiResult<Void> addSinger(@Valid @RequestBody SingerReq singerReq) {
+        singerService.addSinger(singerReq);
+        return ApiResult.success();
     }
 }

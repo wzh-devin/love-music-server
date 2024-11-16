@@ -3,6 +3,7 @@ package com.devin.love.music.common.config;
 import com.devin.love.music.common.annotation.ApiV1;
 import com.devin.love.music.common.constant.ExcludePath;
 import com.devin.love.music.common.constant.Version;
+import com.devin.love.music.common.interceptor.TokenInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;

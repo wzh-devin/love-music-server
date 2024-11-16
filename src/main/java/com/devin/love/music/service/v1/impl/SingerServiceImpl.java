@@ -1,23 +1,27 @@
 package com.devin.love.music.service.v1.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.devin.love.music.common.utils.AssertUtil;
+import com.devin.love.music.common.utils.SnowFlake;
 import com.devin.love.music.dao.v1.AlbumDao;
 import com.devin.love.music.dao.v1.MusicDao;
 import com.devin.love.music.dao.v1.SingerDao;
 import com.devin.love.music.domain.entity.Album;
 import com.devin.love.music.domain.entity.Singer;
+import com.devin.love.music.domain.vo.req.SingerReq;
 import com.devin.love.music.domain.vo.resp.AlbumInfoResp;
 import com.devin.love.music.domain.vo.resp.SingerInfoResp;
 import com.devin.love.music.service.v1.SingerService;
 import com.devin.love.music.service.v1.builder.SingerBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 2024/11/6 0:53
@@ -57,6 +61,30 @@ public class SingerServiceImpl implements SingerService {
             });
             singerInfoResps.add(SingerBuilder.buildSingerInfoResp(singer, albumInfoRespList));
         });
+
         return singerInfoResps;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void addSinger(SingerReq singerReq) {
+        if (Objects.isNull(singerReq)) return;
+
+        // 构建歌手实体
+        Singer singer = SingerBuilder.buildSinger(singerReq);
+        log.info("singer: {}", singer);
+        boolean saveResult = singerDao.save(singer);
+        AssertUtil.isTrue(saveResult, "歌手插入失败");
+
+        // 判断专辑是否存在
+        if (!singerReq.getAlbums().isEmpty()) {
+            // 构建专辑列表，产生关联
+            List<Album> albums = singerReq.getAlbums().stream()
+                    .peek(album -> album.setSingerId(singer.getId()))
+                    .toList();
+            // 插入专辑
+            boolean albumResult = albumDao.saveBatch(albums);
+            AssertUtil.isTrue(albumResult, "专辑插入失败");
+        }
     }
 }

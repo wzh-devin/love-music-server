@@ -1,5 +1,7 @@
 package com.devin.love.music.service.v1;
 
+import com.devin.love.music.domain.entity.Singer;
+import com.devin.love.music.domain.vo.req.SingerReq;
 import com.devin.love.music.domain.vo.resp.SingerInfoResp;
 
 import java.util.List;
@@ -19,4 +21,11 @@ public interface SingerService {
      * @return
      */
     List<SingerInfoResp> getSingerList();
+
+    /**
+     * 新增歌手
+     * @param singerReq
+     * @return
+     */
+    void addSinger(SingerReq singerReq);
 }

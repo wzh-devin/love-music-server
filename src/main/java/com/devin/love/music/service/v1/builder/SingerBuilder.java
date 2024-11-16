@@ -1,9 +1,12 @@
 package com.devin.love.music.service.v1.builder;
 
+import com.devin.love.music.common.utils.SnowFlake;
 import com.devin.love.music.domain.entity.Album;
 import com.devin.love.music.domain.entity.Singer;
+import com.devin.love.music.domain.vo.req.SingerReq;
 import com.devin.love.music.domain.vo.resp.AlbumInfoResp;
 import com.devin.love.music.domain.vo.resp.SingerInfoResp;
+import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,7 +36,6 @@ public class SingerBuilder {
                     .build();
     }
 
-
     public static AlbumInfoResp buildAlbumInfoResp(Album album) {
         return AlbumInfoResp.builder()
                 .id(album.getId())
@@ -43,5 +45,12 @@ public class SingerBuilder {
                 .releaseTime(album.getReleaseTime())
                 .description(album.getDescription())
                 .build();
+    }
+
+    public static Singer buildSinger(SingerReq singerReq) {
+        Singer singer = new Singer();
+        BeanUtils.copyProperties(singerReq, singer);
+        singer.setId(SnowFlake.nextId());
+        return singer;
     }
 }

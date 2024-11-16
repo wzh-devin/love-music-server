@@ -2,6 +2,7 @@ package com.devin.love.music.domain.vo.resp;
 
 import cn.hutool.core.date.DateTime;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
@@ -36,6 +37,7 @@ public class AlbumInfoResp {
     private String albumPicUrl;
 
     @ApiModelProperty("专辑发行时间")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate releaseTime;
 
     @ApiModelProperty("专辑中的歌曲总数")
