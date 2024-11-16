@@ -1,14 +1,11 @@
-package com.devin.love.music.common.config;
+package com.devin.love.music.common.interceptor;
 
-import com.alibaba.druid.util.StringUtils;
 import com.devin.love.music.common.domain.dto.RequestInfo;
 import com.devin.love.music.common.enums.HttpErrorEnum;
 import com.devin.love.music.common.enums.HttpMethodEnum;
 import com.devin.love.music.common.http.PreResponseHandler;
-import com.devin.love.music.common.properties.CrossHttpOptionsProperties;
 import com.devin.love.music.common.utils.JwtUtil;
 import com.devin.love.music.common.utils.RequestContext;
-import io.netty.util.internal.StringUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -16,7 +13,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -33,7 +29,7 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class TokenInterceptor implements HandlerInterceptor {
+public class  TokenInterceptor implements HandlerInterceptor {
 
     private final JwtUtil jwtUtil;
 
