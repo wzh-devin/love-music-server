@@ -1,6 +1,7 @@
 package com.devin.love.music.common.config;
 
 import com.devin.love.music.common.annotation.ApiV1;
+import com.devin.love.music.common.constant.ExcludePath;
 import com.devin.love.music.common.constant.Version;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(tokenInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/**/login");
+                .excludePathPatterns(ExcludePath.tokenInterceptorExcludePath());
     }
 }
