@@ -34,8 +34,6 @@ logging:
     com.devin.love.music.mapper*: debug
     org.springframework.jdbc.core: debug
     com.alibaba.druid: debug
-  file:
-    name: ./logs/love-music.log
   config: classpath:logback-spring.xml
 
 jwt:
