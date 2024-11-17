@@ -36,6 +36,7 @@ logging:
     com.alibaba.druid: debug
   file:
     name: ./logs/love-music.log
+  config: classpath:logback-spring.xml
 
 jwt:
   secret: ${love-music.jwt.secret}
