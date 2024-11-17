@@ -4,6 +4,7 @@ import com.devin.love.music.domain.entity.Singer;
 import com.devin.love.music.domain.vo.req.SingerReq;
 import com.devin.love.music.domain.vo.resp.SingerInfoResp;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -28,4 +29,10 @@ public interface SingerService {
      * @return
      */
     void addSinger(SingerReq singerReq);
+
+    /**
+     * 更新歌手信息
+     * @param singerReq
+     */
+    void updateSingerInfo(@Valid SingerReq singerReq);
 }

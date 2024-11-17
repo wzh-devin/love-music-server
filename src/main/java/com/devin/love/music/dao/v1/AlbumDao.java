@@ -2,6 +2,7 @@ package com.devin.love.music.dao.v1;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.devin.love.music.domain.entity.Album;
+import com.devin.love.music.domain.vo.req.SingerReq;
 import com.devin.love.music.domain.vo.resp.AlbumInfoResp;
 import com.devin.love.music.mapper.v1.AlbumMapper;
 import com.devin.love.music.service.v1.builder.SingerBuilder;
@@ -22,6 +23,7 @@ public class AlbumDao extends ServiceImpl<AlbumMapper, Album> {
 
     /**
      * 根据歌手id获取专辑列表
+     *
      * @return
      */
     public List<AlbumInfoResp> getAlbumsBySingerId(Long singerId) {
@@ -32,4 +34,5 @@ public class AlbumDao extends ServiceImpl<AlbumMapper, Album> {
                 .map(SingerBuilder::buildAlbumInfoResp)
                 .toList();
     }
+
 }

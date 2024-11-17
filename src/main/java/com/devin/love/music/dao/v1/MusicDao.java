@@ -1,10 +1,13 @@
 package com.devin.love.music.dao.v1;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.devin.love.music.domain.entity.Album;
 import com.devin.love.music.domain.entity.Music;
 import com.devin.love.music.mapper.v1.MusicMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 2024/11/7 1:56
@@ -19,6 +22,7 @@ public class MusicDao extends ServiceImpl<MusicMapper, Music> {
 
     /**
      * 获取歌曲数量
+     *
      * @param singerId
      * @param albumId
      * @return
@@ -28,5 +32,17 @@ public class MusicDao extends ServiceImpl<MusicMapper, Music> {
                 .eq(Music::getSingerId, singerId)
                 .eq(Music::getAlbumId, albumId)
                 .count();
+    }
+
+    public List<Music> getMusicListByAlbumIdsOrSingerId(List<Long> albumIds, Long singerId) {
+        if (albumIds.isEmpty()) {
+            return lambdaQuery()
+                    .eq(Music::getSingerId, singerId)
+                    .list();
+        }
+        return lambdaQuery()
+                .eq(Music::getSingerId, singerId)
+                .or()
+                .in(Music::getAlbumId, albumIds).list();
     }
 }

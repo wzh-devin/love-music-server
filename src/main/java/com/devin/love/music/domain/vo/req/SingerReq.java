@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.scheduling.quartz.LocalDataSourceJobStore;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
@@ -32,10 +33,10 @@ public class SingerReq {
     private Long id;
 
     @ApiModelProperty("歌手名")
-    @NotNull(message = "歌手名不能为空")
+    @NotBlank(message = "歌手名不能为空")
     private String name;
 
-    @ApiModelProperty("歌手性别")
+    @ApiModelProperty("歌手性别, 0: 女， 1: 男")
     private Integer sex;
 
     @ApiModelProperty("歌手生日")

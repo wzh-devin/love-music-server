@@ -7,6 +7,7 @@ import com.devin.love.music.dao.v1.AlbumDao;
 import com.devin.love.music.dao.v1.MusicDao;
 import com.devin.love.music.dao.v1.SingerDao;
 import com.devin.love.music.domain.entity.Album;
+import com.devin.love.music.domain.entity.Music;
 import com.devin.love.music.domain.entity.Singer;
 import com.devin.love.music.domain.vo.req.SingerReq;
 import com.devin.love.music.domain.vo.resp.AlbumInfoResp;
@@ -86,5 +87,29 @@ public class SingerServiceImpl implements SingerService {
             boolean albumResult = albumDao.saveBatch(albums);
             AssertUtil.isTrue(albumResult, "专辑插入失败");
         }
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void updateSingerInfo(SingerReq singerReq) {
+        if (Objects.isNull(singerReq)) return;
+        List<Album> albumList = singerReq.getAlbums();
+        List<Long> albumIds = albumList.stream().map(Album::getId).distinct().toList();
+        // 批量删除歌曲信息
+        List<Music> musicList = musicDao.getMusicListByAlbumIdsOrSingerId(albumIds, singerReq.getId());
+        if (!musicList.isEmpty()) {
+            boolean delMusic = musicDao.removeByIds(musicList.stream().map(Music::getId).distinct().toList());
+            AssertUtil.isTrue(delMusic, "歌曲删除失败");
+        }
+        // 批量删除专辑信息
+        if (!albumIds.isEmpty()) {
+            boolean delAlbum = albumDao.removeByIds(albumIds);
+            AssertUtil.isTrue(delAlbum, "专辑删除失败");
+        }
+        // 删除歌手信息
+        boolean delSinger = singerDao.removeById(singerReq.getId());
+        AssertUtil.isTrue(delSinger, "歌手删除失败");
+        // 新增歌手逻辑
+        addSinger(singerReq);
     }
 }

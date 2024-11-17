@@ -1,6 +1,8 @@
 package com.devin.love.music.domain.vo.resp;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
@@ -27,6 +29,7 @@ import java.util.List;
 public class SingerInfoResp {
 
     @ApiModelProperty("歌手id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     @ApiModelProperty("歌手名字")
