@@ -1,6 +1,6 @@
 package com.devin.love.music.service.v1.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.devin.love.music.common.enums.ExecuteStatusEnum;
 import com.devin.love.music.common.utils.AssertUtil;
 import com.devin.love.music.common.utils.SnowFlake;
 import com.devin.love.music.dao.v1.AlbumDao;
@@ -50,29 +50,62 @@ public class SingerServiceImpl implements SingerService {
             return null;
         }
 
-        // 查询歌手的所有专辑
-        List<SingerInfoResp> singerInfoResps = new ArrayList<>();
-        singers.forEach(singer -> {
+        // 封装歌手信息
+        return singers.stream().map(singer -> {
+            // 查询歌手的专辑信息
+            List<Album> albumList = albumDao.getAlbumsBySingerIds(List.of(singer.getId()));
             // 封装专辑信息
-            List<AlbumInfoResp> albumInfoRespList = albumDao.getAlbumsBySingerId(singer.getId());
-            albumInfoRespList.forEach(albumInfoResp -> {
+            List<AlbumInfoResp> albumInfoRespList = albumList.stream().map(album -> {
+                AlbumInfoResp albumInfoResp = SingerBuilder.buildAlbumInfoResp(album);
                 // 查询专辑中的歌曲
-                Long musicTotal = musicDao.getMusicCount(singer.getId(), albumInfoResp.getId());
-                albumInfoResp.setMusicTotal(musicTotal);
-            });
-            singerInfoResps.add(SingerBuilder.buildSingerInfoResp(singer, albumInfoRespList));
-        });
-
-        return singerInfoResps;
+                albumInfoResp.setMusicTotal(musicDao.getMusicCount(album.getSingerId(), album.getId()));
+                return albumInfoResp;
+            }).toList();
+            return SingerBuilder.buildSingerInfoResp(singer, albumInfoRespList);
+        }).toList();
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void addSinger(SingerReq singerReq) {
+        addSingerCommon(singerReq, ExecuteStatusEnum.ADD);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void updateSingerInfo(SingerReq singerReq) {
+        if (Objects.isNull(singerReq)) return;
+        // 删除歌手信息
+        delSingerCommon(List.of(singerReq.getId()));
+        // 新增歌手
+        addSingerCommon(singerReq, ExecuteStatusEnum.UPDATE);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void deleteSinger(List<Long> singerIds) {
+        if (singerIds.isEmpty()) return;
+        // 删除歌手信息
+        delSingerCommon(singerIds);
+    }
+
+    /**
+     * 新增歌手逻辑抽取
+     *
+     * @param singerReq
+     * @param executeStatus 执行状态
+     */
+    private void addSingerCommon(SingerReq singerReq, ExecuteStatusEnum executeStatus) {
         if (Objects.isNull(singerReq)) return;
 
         // 构建歌手实体
         Singer singer = SingerBuilder.buildSinger(singerReq);
+
+        // 如果是新增，则生成新的id
+        if (ExecuteStatusEnum.ADD.name().equals(executeStatus.name())) {
+            singer.setId(SnowFlake.nextId());
+        }
+
         log.info("singer: {}", singer);
         boolean saveResult = singerDao.save(singer);
         AssertUtil.isTrue(saveResult, "歌手插入失败");
@@ -89,27 +122,24 @@ public class SingerServiceImpl implements SingerService {
         }
     }
 
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void updateSingerInfo(SingerReq singerReq) {
-        if (Objects.isNull(singerReq)) return;
-        List<Album> albumList = singerReq.getAlbums();
-        List<Long> albumIds = albumList.stream().map(Album::getId).distinct().toList();
-        // 批量删除歌曲信息
-        List<Music> musicList = musicDao.getMusicListByAlbumIdsOrSingerId(albumIds, singerReq.getId());
-        if (!musicList.isEmpty()) {
-            boolean delMusic = musicDao.removeByIds(musicList.stream().map(Music::getId).distinct().toList());
-            AssertUtil.isTrue(delMusic, "歌曲删除失败");
+    /**
+     * 公共删除逻辑
+     *
+     * @param singerIds TODO 后续会支持批量删除，所以这里需要传入歌手id列表，以达到复用
+     */
+    private void delSingerCommon(List<Long> singerIds) {
+        // 删除音乐信息
+        if (!musicDao.getMusicBySingerIds(singerIds).isEmpty()) {
+            boolean delMusicResult = musicDao.deleteBySingerIds(singerIds);
+            AssertUtil.isTrue(delMusicResult, "歌曲删除失败");
         }
-        // 批量删除专辑信息
-        if (!albumIds.isEmpty()) {
-            boolean delAlbum = albumDao.removeByIds(albumIds);
-            AssertUtil.isTrue(delAlbum, "专辑删除失败");
+        // 删除专辑信息
+        if (!albumDao.getAlbumsBySingerIds(singerIds).isEmpty()) {
+            boolean delAlbumResult = albumDao.deleteBySingerIds(singerIds);
+            AssertUtil.isTrue(delAlbumResult, "专辑删除失败");
         }
         // 删除歌手信息
-        boolean delSinger = singerDao.removeById(singerReq.getId());
-        AssertUtil.isTrue(delSinger, "歌手删除失败");
-        // 新增歌手逻辑
-        addSinger(singerReq);
+        boolean delSingerResult = singerDao.removeByIds(singerIds);
+        AssertUtil.isTrue(delSingerResult, "歌手删除失败");
     }
 }

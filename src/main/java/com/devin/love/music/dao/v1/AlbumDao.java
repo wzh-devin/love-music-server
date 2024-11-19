@@ -24,15 +24,24 @@ public class AlbumDao extends ServiceImpl<AlbumMapper, Album> {
     /**
      * 根据歌手id获取专辑列表
      *
+     * @param singerIds
      * @return
      */
-    public List<AlbumInfoResp> getAlbumsBySingerId(Long singerId) {
+    public List<Album> getAlbumsBySingerIds(List<Long> singerIds) {
         return lambdaQuery()
-                .eq(Album::getSingerId, singerId)
-                .list()
-                .stream()
-                .map(SingerBuilder::buildAlbumInfoResp)
-                .toList();
+                .in(Album::getSingerId, singerIds)
+                .list();
     }
 
+    /**
+     * 根据歌手id删除专辑信息
+     *
+     * @param singerIds
+     * @return
+     */
+    public boolean deleteBySingerIds(List<Long> singerIds) {
+        return lambdaUpdate()
+                .in(Album::getSingerId, singerIds)
+                .remove();
+    }
 }

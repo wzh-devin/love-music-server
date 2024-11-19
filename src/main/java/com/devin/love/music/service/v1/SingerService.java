@@ -35,4 +35,10 @@ public interface SingerService {
      * @param singerReq
      */
     void updateSingerInfo(@Valid SingerReq singerReq);
+
+    /**
+     * 删除歌手信息
+     * @param singerIds
+     */
+    void deleteSinger(@Valid List<Long> singerIds);
 }

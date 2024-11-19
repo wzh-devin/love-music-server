@@ -1,6 +1,7 @@
 package com.devin.love.music.dao.v1;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.devin.love.music.common.utils.AssertUtil;
 import com.devin.love.music.domain.entity.Album;
 import com.devin.love.music.domain.entity.Music;
 import com.devin.love.music.mapper.v1.MusicMapper;
@@ -34,15 +35,43 @@ public class MusicDao extends ServiceImpl<MusicMapper, Music> {
                 .count();
     }
 
-    public List<Music> getMusicListByAlbumIdsOrSingerId(List<Long> albumIds, Long singerId) {
+    /**
+     * 根据专辑id或者歌手id获取歌曲
+     * @param albumIds
+     * @param singerIds
+     * @return
+     */
+    public List<Music> getMusicListByAlbumIdsOrSingerIds(List<Long> albumIds, List<Long> singerIds) {
         if (albumIds.isEmpty()) {
             return lambdaQuery()
-                    .eq(Music::getSingerId, singerId)
+                    .in(Music::getSingerId, singerIds)
                     .list();
         }
         return lambdaQuery()
-                .eq(Music::getSingerId, singerId)
+                .in(Music::getSingerId, singerIds)
                 .or()
                 .in(Music::getAlbumId, albumIds).list();
+    }
+
+    /**
+     * 根据歌手id删除歌曲信息
+     * @param singerIds
+     * @return
+     */
+    public boolean deleteBySingerIds(List<Long> singerIds) {
+        return lambdaUpdate()
+                .in(Music::getSingerId, singerIds)
+                .remove();
+    }
+
+    /**
+     * 根据歌手id获取歌曲
+     * @param singerIds
+     * @return
+     */
+    public List<Music> getMusicBySingerIds(List<Long> singerIds) {
+        return lambdaQuery()
+                .in(Music::getSingerId, singerIds)
+                .list();
     }
 }

@@ -50,7 +50,6 @@ public class SingerBuilder {
     public static Singer buildSinger(SingerReq singerReq) {
         Singer singer = new Singer();
         BeanUtils.copyProperties(singerReq, singer);
-        singer.setId(SnowFlake.nextId());
         return singer;
     }
 }
