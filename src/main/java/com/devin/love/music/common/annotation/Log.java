@@ -1,5 +1,7 @@
 package com.devin.love.music.common.annotation;
 
+import com.devin.love.music.common.constant.Version;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -32,4 +34,12 @@ public @interface Log {
      * @return
      */
     String module();
+
+    /**
+     * 业务版本
+     *
+     * @see Version
+     * @return
+     */
+    String version();
 }
