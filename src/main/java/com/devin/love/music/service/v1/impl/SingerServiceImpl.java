@@ -1,6 +1,8 @@
 package com.devin.love.music.service.v1.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.devin.love.music.common.enums.ExecuteStatusEnum;
+import com.devin.love.music.common.exception.FileBusinessException;
 import com.devin.love.music.common.utils.AssertUtil;
 import com.devin.love.music.common.utils.SnowFlake;
 import com.devin.love.music.dao.v1.AlbumDao;
@@ -20,7 +22,15 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.DigestUtils;
+import org.springframework.util.ObjectUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,6 +47,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SingerServiceImpl implements SingerService {
 
+    /**
+     * 上传头像的文件夹路径
+     */
+    public static final String UPLOAD_SINGER_AVATARS = "/upload/singer/avatars/";
+
+    private final HttpServletResponse response;
     private final SingerDao singerDao;
     private final AlbumDao albumDao;
     private final MusicDao musicDao;
@@ -89,6 +105,77 @@ public class SingerServiceImpl implements SingerService {
         delSingerCommon(singerIds);
     }
 
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void uploadSingerPic(MultipartFile uploadFile, Long id) throws IOException {
+        // TODO 后续接入Minio技术，将图片上传到Minio
+        Singer singer = singerDao.getById(id);
+        try (InputStream is = uploadFile.getInputStream()) {
+            // 获取MD5值
+            String md5 = DigestUtils.md5DigestAsHex(is);
+            if (checkFileDuplicate(singer, md5)) return;
+            // 获取原始文件名
+            String[] originName = Objects.requireNonNull(uploadFile.getOriginalFilename()).split("\\.");
+            String prefix = originName[0];
+            String suffix = originName[originName.length - 1];
+            // 设置上传的文件名
+            String fileName = prefix + "_" + SnowFlake.nextId() + "." + suffix;
+            // 上传路径
+            File dirPath = new File(System.getProperty("user.dir") + UPLOAD_SINGER_AVATARS);
+            // 判断上传路径是否存在
+            if (!dirPath.exists()) dirPath.mkdirs();
+            // 将文件上传到此目录下
+            uploadFile.transferTo(new File(dirPath, fileName));
+            // 将文件信息存入到数据库
+            singer.setSingerPicUrl(fileName);
+            singer.setFileMd5(md5);
+            singerDao.updateById(singer);
+        } catch (Exception e) {
+            throw new FileBusinessException("文件上传异常" + e.getMessage());
+        }
+    }
+
+    /**
+     * 文件重复性检查
+     *
+     * @param singer
+     * @param fileMd5
+     */
+    private boolean checkFileDuplicate(Singer singer, String fileMd5) {
+        // 判断md5值
+        return !ObjectUtils.isEmpty(singer.getFileMd5()) && singer.getFileMd5().equals(fileMd5);
+    }
+
+    @Override
+    public void downloadFile(String fileName) {
+        // TODO 后续接入Minio技术，从Minio下载文件
+        File file = new File(System.getProperty("user.dir") + UPLOAD_SINGER_AVATARS + fileName);
+        if (!file.exists()) {
+            throw new FileBusinessException("文件不存在");
+        }
+
+        // 设置响应体
+        response.setContentType("application/octet-stream");
+        response.setCharacterEncoding("utf-8");
+        response.setContentLength((int) file.length());
+        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, StandardCharsets.UTF_8));
+
+        // 下载文件
+        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file)); ServletOutputStream os = response.getOutputStream()) {
+            byte[] buf = new byte[1024];
+            int len = 0;
+            while ((len = bis.read(buf)) != -1) {
+                os.write(buf, 0, len);
+            }
+            os.flush();
+            return; // 确保在写入文件内容后立即返回
+        } catch (Exception e) {
+            // 失败
+            log.error("文件下载失败：{}", e.getMessage());
+            throw new FileBusinessException(e.getMessage());
+        }
+    }
+
     /**
      * 新增歌手逻辑抽取
      *
@@ -113,9 +200,7 @@ public class SingerServiceImpl implements SingerService {
         // 判断专辑是否存在
         if (!singerReq.getAlbums().isEmpty()) {
             // 构建专辑列表，产生关联
-            List<Album> albums = singerReq.getAlbums().stream()
-                    .peek(album -> album.setSingerId(singer.getId()))
-                    .toList();
+            List<Album> albums = singerReq.getAlbums().stream().peek(album -> album.setSingerId(singer.getId())).toList();
             // 插入专辑
             boolean albumResult = albumDao.saveBatch(albums);
             AssertUtil.isTrue(albumResult, "专辑插入失败");

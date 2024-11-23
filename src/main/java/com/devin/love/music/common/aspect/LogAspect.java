@@ -9,6 +9,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,14 +36,14 @@ public class LogAspect {
 
     /**
      * 前置通知
-     * @param joinPoint
+     * @param point
      */
     @Around("pointCut()")
     public Object before(ProceedingJoinPoint point) {
 
         // 获取类名，方法名
         String className = point.getSignature().getDeclaringTypeName();
-        String methodName = point.getSignature().getName();
+        String methodName = point.getSignature().getName().concat("()");
 
         // 获取方法签名
         MethodSignature signature = (MethodSignature) point.getSignature();
@@ -55,12 +56,19 @@ public class LogAspect {
         Log annotation = signature.getMethod().getAnnotation(Log.class);
         // 模块名 + 类名
         String module = annotation.module().concat("(" + className + ")");
-        // 描述 + 方法名
-        String desc = annotation.desc().concat("(" + methodName + ")");
+        // 版本信息
+        String version = annotation.version().split("/")[2].toUpperCase().concat("版本");
+        // 描述 + 方法名 + 版本信息
+        String desc = annotation.desc().concat("(" + methodName + "==>" + version + ")");
 
         Map<String, Object> map = new HashMap<>();
 
         for (int i = 0; i < paramNames.length; i++) {
+            // 如果是File类型的参数，将参数设置为文件名
+            if (args[i] instanceof MultipartFile) {
+                map.put(paramNames[i], ((MultipartFile) args[i]).getOriginalFilename());
+                continue;
+            }
             map.put(paramNames[i], args[i]);
         }
 

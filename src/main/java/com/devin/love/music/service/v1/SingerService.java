@@ -3,8 +3,12 @@ package com.devin.love.music.service.v1;
 import com.devin.love.music.domain.entity.Singer;
 import com.devin.love.music.domain.vo.req.SingerReq;
 import com.devin.love.music.domain.vo.resp.SingerInfoResp;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 /**
@@ -41,4 +45,17 @@ public interface SingerService {
      * @param singerIds
      */
     void deleteSinger(@Valid List<Long> singerIds);
+
+    /**
+     * 上传歌手头像
+     * @param uploadFile
+     * @param id
+     */
+    void uploadSingerPic(MultipartFile uploadFile, Long id) throws IOException;
+
+    /**
+     * 文件下载
+     * @param fileName
+     */
+    void downloadFile(String fileName);
 }

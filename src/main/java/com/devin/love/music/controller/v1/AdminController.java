@@ -1,6 +1,8 @@
 package com.devin.love.music.controller.v1;
 
 import com.devin.love.music.common.annotation.ApiV1;
+import com.devin.love.music.common.annotation.Log;
+import com.devin.love.music.common.constant.Version;
 import com.devin.love.music.domain.entity.Admin;
 import com.devin.love.music.domain.vo.req.LoginReq;
 import com.devin.love.music.domain.vo.resp.ApiResult;
@@ -11,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 
 /**
  * 2024/11/1 17:12
@@ -40,6 +43,7 @@ public class AdminController {
      */
     @ApiOperation("登录接口")
     @PostMapping("/login")
+    @Log(desc = "登录接口", module = "后台用户管理模块", version = Version.V1)
     public ApiResult<String> login(@RequestBody LoginReq loginReq) {
         String token = adminService.login(loginReq);
         return ApiResult.success(token, null);
