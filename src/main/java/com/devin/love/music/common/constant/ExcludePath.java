@@ -18,6 +18,7 @@ public class ExcludePath {
     public static String[] tokenInterceptorExcludePath() {
         return new String[]{
                 "/**/login",
+                "/**/download/**",
                 "/swagger-resources/**",
                 "/webjars/**",
                 "/v2/**",

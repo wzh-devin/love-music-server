@@ -19,6 +19,10 @@ spring:
     database: ${love-music.redis.database}
     port: ${love-music.redis.port}
     password: ${love-music.redis.password}
+  servlet:
+    multipart:
+      max-file-size: 20MB # upload file max size
+      max-request-size: 100MB # upload file request max size
 
 mybatis:
   configuration:

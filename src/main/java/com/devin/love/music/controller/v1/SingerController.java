@@ -14,8 +14,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -66,6 +69,23 @@ public class SingerController {
     @Log(desc = "删除歌手信息", module = "歌手模块", version = Version.V1)
     public ApiResult<Void> deleteSinger(@Valid @RequestBody List<Long> singerIds) {
         singerService.deleteSinger(singerIds);
+        return ApiResult.success();
+    }
+
+    @PostMapping("/upload")
+    @ApiOperation("上传歌手头像")
+//    @Log(desc = "上传歌手头像", module = "歌手模块", version = Version.V1)
+    public ApiResult<Void> uploadSingerPic(@RequestParam("file") MultipartFile uploadFile,
+                                           @RequestParam("id") Long id) throws IOException {
+        singerService.uploadSingerPic(uploadFile, id);
+        uploadFile.getInputStream().close();
+        return ApiResult.success();
+    }
+
+    @GetMapping("/download/{fileName}")
+    @ApiOperation("文件下载")
+    public ApiResult<Void> downloadFile(@PathVariable("fileName") String fileName) {
+        singerService.downloadFile(fileName);
         return ApiResult.success();
     }
 }

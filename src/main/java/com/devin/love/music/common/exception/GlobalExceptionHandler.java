@@ -43,4 +43,15 @@ public class GlobalExceptionHandler {
         log.error("MethodArgumentNotValidException ===> {}", e.getMessage());
         HttpErrorEnum.INVALID_ERROR.sendHttpError(response);
     }
+
+    /**
+     * 文件业务异常
+     * @param e
+     * @throws IOException
+     */
+    @ExceptionHandler(FileBusinessException.class)
+    public void fileBusinessException(FileBusinessException e) throws IOException {
+        log.error("FileBusinessException ===> {}", e.getMessage());
+        HttpErrorEnum.SYS_ERROR.sendHttpError(response);
+    }
 }

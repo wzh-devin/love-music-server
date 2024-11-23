@@ -9,6 +9,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -63,6 +64,11 @@ public class LogAspect {
         Map<String, Object> map = new HashMap<>();
 
         for (int i = 0; i < paramNames.length; i++) {
+            // 如果是File类型的参数，将参数设置为文件名
+            if (args[i] instanceof MultipartFile) {
+                map.put(paramNames[i], ((MultipartFile) args[i]).getOriginalFilename());
+                continue;
+            }
             map.put(paramNames[i], args[i]);
         }
 
