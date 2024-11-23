@@ -1,8 +1,11 @@
 package com.devin.love.music.controller.v1;
 
+import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson2.JSONPObject;
 import com.devin.love.music.common.annotation.ApiV1;
 import com.devin.love.music.common.annotation.Log;
 import com.devin.love.music.common.constant.Version;
+import com.devin.love.music.common.enums.HttpErrorEnum;
 import com.devin.love.music.domain.entity.Singer;
 import com.devin.love.music.domain.vo.req.SingerReq;
 import com.devin.love.music.domain.vo.resp.ApiResult;
@@ -16,6 +19,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
@@ -40,6 +44,8 @@ import java.util.List;
 public class SingerController {
 
     private final SingerService singerService;
+
+    private final HttpServletResponse response;
 
     @GetMapping("/list")
     @ApiOperation("获取歌手列表")
@@ -74,18 +80,23 @@ public class SingerController {
 
     @PostMapping("/upload")
     @ApiOperation("上传歌手头像")
-//    @Log(desc = "上传歌手头像", module = "歌手模块", version = Version.V1)
-    public ApiResult<Void> uploadSingerPic(@RequestParam("file") MultipartFile uploadFile,
+    @Log(desc = "上传歌手头像", module = "歌手模块", version = Version.V1)
+    public ApiResult<?> uploadSingerPic(@RequestParam("file") MultipartFile uploadFile,
                                            @RequestParam("id") Long id) throws IOException {
         singerService.uploadSingerPic(uploadFile, id);
-        uploadFile.getInputStream().close();
         return ApiResult.success();
     }
 
     @GetMapping("/download/{fileName}")
     @ApiOperation("文件下载")
-    public ApiResult<Void> downloadFile(@PathVariable("fileName") String fileName) {
-        singerService.downloadFile(fileName);
-        return ApiResult.success();
+    @Log(desc = "歌手头像下载", module = "歌手模块", version = Version.V1)
+    public void downloadFile(@PathVariable("fileName") String fileName) throws IOException {
+        try {
+            singerService.downloadFile(fileName);
+        } catch (Exception e) {
+            // 手动向前端打入信息，防止将ApiResult对象转换为二进制，产生没有转换器的报错
+            log.error("File Download Error: {}", e.getMessage());
+            HttpErrorEnum.SYS_ERROR.sendHttpError(response);
+        }
     }
 }

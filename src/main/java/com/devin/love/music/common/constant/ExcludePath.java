@@ -19,6 +19,7 @@ public class ExcludePath {
         return new String[]{
                 "/**/login",
                 "/**/download/**",
+                "/**/upload/**",
                 "/swagger-resources/**",
                 "/webjars/**",
                 "/v2/**",

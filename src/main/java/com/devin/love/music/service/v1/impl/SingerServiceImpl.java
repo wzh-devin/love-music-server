@@ -29,6 +29,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -50,10 +52,10 @@ public class SingerServiceImpl implements SingerService {
      */
     public static final String UPLOAD_SINGER_AVATARS = "/upload/singer/avatars/";
 
+    private final HttpServletResponse response;
     private final SingerDao singerDao;
     private final AlbumDao albumDao;
     private final MusicDao musicDao;
-    private final HttpServletResponse response;
 
     @Override
     public List<SingerInfoResp> getSingerList() {
@@ -108,9 +110,9 @@ public class SingerServiceImpl implements SingerService {
     public void uploadSingerPic(MultipartFile uploadFile, Long id) throws IOException {
         // TODO 后续接入Minio技术，将图片上传到Minio
         Singer singer = singerDao.getById(id);
-        // 获取MD5值
-        String md5 = DigestUtils.md5DigestAsHex(uploadFile.getInputStream());
-        try {
+        try (InputStream is = uploadFile.getInputStream()) {
+            // 获取MD5值
+            String md5 = DigestUtils.md5DigestAsHex(is);
             if (checkFileDuplicate(singer, md5)) return;
             // 获取原始文件名
             String[] originName = Objects.requireNonNull(uploadFile.getOriginalFilename()).split("\\.");
@@ -130,9 +132,6 @@ public class SingerServiceImpl implements SingerService {
             singerDao.updateById(singer);
         } catch (Exception e) {
             throw new FileBusinessException("文件上传异常" + e.getMessage());
-        } finally {
-            // 关闭流
-            uploadFile.getInputStream().close();
         }
     }
 
@@ -156,11 +155,10 @@ public class SingerServiceImpl implements SingerService {
         }
 
         // 设置响应体
-        response.reset();
         response.setContentType("application/octet-stream");
         response.setCharacterEncoding("utf-8");
         response.setContentLength((int) file.length());
-        response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, StandardCharsets.UTF_8));
 
         // 下载文件
         try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file)); ServletOutputStream os = response.getOutputStream()) {
@@ -174,6 +172,7 @@ public class SingerServiceImpl implements SingerService {
         } catch (Exception e) {
             // 失败
             log.error("文件下载失败：{}", e.getMessage());
+            throw new FileBusinessException(e.getMessage());
         }
     }
 
