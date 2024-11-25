@@ -29,6 +29,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class MusicServiceImpl implements MusicService {
 
+    public static final long ALBUM_NOT_EXIST = -1L;
     private final MusicDao musicDao;
     private final SingerDao singerDao;
     private final AlbumDao albumDao;
@@ -41,8 +42,7 @@ public class MusicServiceImpl implements MusicService {
         Singer singer = singerDao.getById(singerId);
         Album album;
 
-
-        if (Objects.isNull(albumId)) {
+        if (albumId == ALBUM_NOT_EXIST) {
             album = null;
             musicList = musicDao.getMusicBySingerIds(List.of(singerId));
         } else {
