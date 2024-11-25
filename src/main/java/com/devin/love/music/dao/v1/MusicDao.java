@@ -74,4 +74,28 @@ public class MusicDao extends ServiceImpl<MusicMapper, Music> {
                 .in(Music::getSingerId, singerIds)
                 .list();
     }
+
+    /**
+     * 根据专辑ids和歌手id删除歌曲
+     * @param albumsIds
+     * @param singerId
+     * @return
+     */
+    public boolean deleteBySingerIdsAndSingerId(List<Long> albumsIds, Long singerId) {
+        return lambdaUpdate()
+                .in(Music::getAlbumId, albumsIds)
+                .eq(Music::getSingerId, singerId)
+                .remove();
+    }
+
+    /**
+     * 根据专辑id获取歌曲
+     * @param albumsIds
+     * @return
+     */
+    public List<Music> getMusicByAlbumIds(List<Long> albumsIds) {
+        return lambdaQuery()
+                .in(Music::getAlbumId, albumsIds)
+                .list();
+    }
 }

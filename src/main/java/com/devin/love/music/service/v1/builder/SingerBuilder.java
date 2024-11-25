@@ -1,16 +1,11 @@
 package com.devin.love.music.service.v1.builder;
 
-import com.devin.love.music.common.utils.SnowFlake;
+import com.devin.love.music.domain.dto.AlbumInfoDto;
 import com.devin.love.music.domain.entity.Album;
 import com.devin.love.music.domain.entity.Singer;
 import com.devin.love.music.domain.vo.req.SingerReq;
-import com.devin.love.music.domain.vo.resp.AlbumInfoResp;
 import com.devin.love.music.domain.vo.resp.SingerInfoResp;
 import org.springframework.beans.BeanUtils;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * 2024/11/6 1:37
@@ -22,7 +17,7 @@ import java.util.List;
  */
 public class SingerBuilder {
 
-    public static SingerInfoResp buildSingerInfoResp(Singer singer, List<AlbumInfoResp> albumInfoResp) {
+    public static SingerInfoResp buildSingerInfoResp(Singer singer) {
         return SingerInfoResp.builder()
                     .id(singer.getId())
                     .sex(singer.getSex())
@@ -32,18 +27,18 @@ public class SingerBuilder {
                     .birthday(singer.getBirthday())
                     .nationality(singer.getNationality())
                     .birthplace(singer.getBirthplace())
-                    .albums(albumInfoResp)
                     .build();
     }
 
-    public static AlbumInfoResp buildAlbumInfoResp(Album album) {
-        return AlbumInfoResp.builder()
+    public static AlbumInfoDto buildAlbumInfoResp(Album album, Singer singer) {
+        return AlbumInfoDto.builder()
                 .id(album.getId())
                 .singerId(album.getSingerId())
                 .name(album.getName())
                 .albumPicUrl(album.getAlbumPicUrl())
                 .releaseTime(album.getReleaseTime())
                 .description(album.getDescription())
+                .singerName(singer.getName())
                 .build();
     }
 

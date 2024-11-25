@@ -1,5 +1,10 @@
 package com.devin.love.music.service.v1;
 
+import com.devin.love.music.domain.dto.AlbumInfoDto;
+import com.devin.love.music.domain.vo.req.AlbumReq;
+
+import java.util.List;
+
 /**
  * 2024/11/6 1:10
  * <p></p>
@@ -9,4 +14,35 @@ package com.devin.love.music.service.v1;
  * @since 1.0
  */
 public interface AlbumService {
+
+    /**
+     * 获取所有的专辑列表
+     * @return
+     */
+    List<AlbumInfoDto> getAllAlbumList();
+
+    /**
+     * 获取歌手专辑列表
+     * @param singerId
+     * @return
+     */
+    List<AlbumInfoDto> getSingerAlbums(Long singerId);
+
+    /**
+     * 新增歌手专辑
+     * @param albumInfoDto
+     */
+    void addAlbum(AlbumInfoDto albumInfoDto);
+
+    /**
+     * 修改歌手专辑
+     * @param albumInfoDto
+     */
+    void editAlbum(AlbumInfoDto albumInfoDto);
+
+    /**
+     * 删除歌手专辑
+     * @param albumReq
+     */
+    void delAlbum(AlbumReq albumReq);
 }
