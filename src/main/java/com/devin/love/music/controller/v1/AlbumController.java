@@ -5,6 +5,7 @@ import com.devin.love.music.common.annotation.Log;
 import com.devin.love.music.common.constant.Version;
 import com.devin.love.music.domain.dto.AlbumInfoDto;
 import com.devin.love.music.domain.entity.Album;
+import com.devin.love.music.domain.vo.req.AlbumReq;
 import com.devin.love.music.domain.vo.resp.ApiResult;
 import com.devin.love.music.service.v1.AlbumService;
 import io.swagger.annotations.Api;
@@ -54,6 +55,22 @@ public class AlbumController {
     @Log(desc = "新增歌手专辑", module = "专辑模块", version = Version.V1)
     public ApiResult<Void> addAlbum(@RequestBody AlbumInfoDto albumInfoDto) {
         albumService.addAlbum(albumInfoDto);
+        return ApiResult.success();
+    }
+
+    @PostMapping("/editAlbum")
+    @ApiOperation("修改歌手专辑")
+    @Log(desc = "修改歌手专辑", module = "专辑模块", version = Version.V1)
+    public ApiResult<Void> editAlbum(@RequestBody AlbumInfoDto albumInfoDto) {
+        albumService.editAlbum(albumInfoDto);
+        return ApiResult.success();
+    }
+
+    @PostMapping("/delAlbum")
+    @ApiOperation("删除歌手专辑")
+    @Log(desc = "删除歌手专辑", module = "专辑模块", version = Version.V1)
+    public ApiResult<Void> delAlbum(@RequestBody AlbumReq albumReq) {
+        albumService.delAlbum(albumReq);
         return ApiResult.success();
     }
 }

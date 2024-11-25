@@ -1,6 +1,7 @@
 package com.devin.love.music.service.v1;
 
 import com.devin.love.music.domain.dto.AlbumInfoDto;
+import com.devin.love.music.domain.vo.req.AlbumReq;
 
 import java.util.List;
 
@@ -32,4 +33,16 @@ public interface AlbumService {
      * @param albumInfoDto
      */
     void addAlbum(AlbumInfoDto albumInfoDto);
+
+    /**
+     * 修改歌手专辑
+     * @param albumInfoDto
+     */
+    void editAlbum(AlbumInfoDto albumInfoDto);
+
+    /**
+     * 删除歌手专辑
+     * @param albumReq
+     */
+    void delAlbum(AlbumReq albumReq);
 }

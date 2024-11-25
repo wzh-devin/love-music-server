@@ -1,6 +1,8 @@
 package com.devin.love.music.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
@@ -20,12 +22,14 @@ import java.time.LocalDate;
 @ApiModel("专辑DTO对象")
 public class AlbumInfoDto {
     @ApiModelProperty("专辑id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     @ApiModelProperty("专辑名")
     private String name;
 
     @ApiModelProperty("专辑对应的歌手id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long singerId;
 
     @ApiModelProperty("专辑对应歌手名")
