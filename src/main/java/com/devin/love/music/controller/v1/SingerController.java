@@ -70,7 +70,7 @@ public class SingerController {
         return ApiResult.success();
     }
 
-    @DeleteMapping("/delete")
+    @PostMapping("/delete")
     @ApiOperation("删除歌手信息")
     @Log(desc = "删除歌手信息", module = "歌手模块", version = Version.V1)
     public ApiResult<Void> deleteSinger(@Valid @RequestBody List<Long> singerIds) {

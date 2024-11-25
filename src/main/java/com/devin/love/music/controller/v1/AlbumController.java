@@ -3,8 +3,8 @@ package com.devin.love.music.controller.v1;
 import com.devin.love.music.common.annotation.ApiV1;
 import com.devin.love.music.common.annotation.Log;
 import com.devin.love.music.common.constant.Version;
+import com.devin.love.music.domain.dto.AlbumInfoDto;
 import com.devin.love.music.domain.entity.Album;
-import com.devin.love.music.domain.vo.resp.AlbumInfoResp;
 import com.devin.love.music.domain.vo.resp.ApiResult;
 import com.devin.love.music.service.v1.AlbumService;
 import io.swagger.annotations.Api;
@@ -38,14 +38,22 @@ public class AlbumController {
     @GetMapping("/getAlbums")
     @ApiOperation("获取所有的专辑信息")
     @Log(desc = "获取所有的专辑", module = "专辑模块", version = Version.V1)
-    public ApiResult<List<AlbumInfoResp>> getAllAlbumList() {
+    public ApiResult<List<AlbumInfoDto>> getAllAlbumList() {
         return ApiResult.success(albumService.getAllAlbumList(), null);
     }
 
     @GetMapping("/getSingerAlbums")
     @ApiOperation("获取歌手专辑列表")
-    @Log(desc = "获取歌手专辑列表", module = "专辑列表", version = Version.V1)
-    public ApiResult<List<AlbumInfoResp>> getSingerAlbums(Long singerId) {
+    @Log(desc = "获取歌手专辑列表", module = "专辑模块", version = Version.V1)
+    public ApiResult<List<AlbumInfoDto>> getSingerAlbums(Long singerId) {
         return ApiResult.success(albumService.getSingerAlbums(singerId), null);
+    }
+
+    @PostMapping("/addAlbum")
+    @ApiOperation("新增歌手专辑")
+    @Log(desc = "新增歌手专辑", module = "专辑模块", version = Version.V1)
+    public ApiResult<Void> addAlbum(@RequestBody AlbumInfoDto albumInfoDto) {
+        albumService.addAlbum(albumInfoDto);
+        return ApiResult.success();
     }
 }

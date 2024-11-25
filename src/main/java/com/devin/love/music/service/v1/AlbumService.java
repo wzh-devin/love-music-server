@@ -1,7 +1,6 @@
 package com.devin.love.music.service.v1;
 
-import com.devin.love.music.domain.entity.Album;
-import com.devin.love.music.domain.vo.resp.AlbumInfoResp;
+import com.devin.love.music.domain.dto.AlbumInfoDto;
 
 import java.util.List;
 
@@ -19,12 +18,18 @@ public interface AlbumService {
      * 获取所有的专辑列表
      * @return
      */
-    List<AlbumInfoResp> getAllAlbumList();
+    List<AlbumInfoDto> getAllAlbumList();
 
     /**
      * 获取歌手专辑列表
      * @param singerId
      * @return
      */
-    List<AlbumInfoResp> getSingerAlbums(Long singerId);
+    List<AlbumInfoDto> getSingerAlbums(Long singerId);
+
+    /**
+     * 新增歌手专辑
+     * @param albumInfoDto
+     */
+    void addAlbum(AlbumInfoDto albumInfoDto);
 }

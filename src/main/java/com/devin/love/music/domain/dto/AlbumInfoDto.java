@@ -1,28 +1,24 @@
-package com.devin.love.music.domain.vo.resp;
+package com.devin.love.music.domain.dto;
 
-import cn.hutool.core.date.DateTime;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 /**
- * 2024/11/6 1:28
+ * 2024/11/25 17:45
  * <p></p>
- *
  * @author <a href="https://github.com/wzh-devin">devin</a>
  * @version 1.0
  * @since 1.0
  */
 @Data
 @Builder
-@ApiModel("专辑响应对象")
-public class AlbumInfoResp {
-
+@ApiModel("专辑DTO对象")
+public class AlbumInfoDto {
     @ApiModelProperty("专辑id")
     private Long id;
 

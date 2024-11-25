@@ -1,6 +1,5 @@
 package com.devin.love.music.service.v1.impl;
 
-import cn.hutool.core.util.ObjectUtil;
 import com.devin.love.music.common.enums.ExecuteStatusEnum;
 import com.devin.love.music.common.exception.FileBusinessException;
 import com.devin.love.music.common.utils.AssertUtil;
@@ -9,16 +8,13 @@ import com.devin.love.music.dao.v1.AlbumDao;
 import com.devin.love.music.dao.v1.MusicDao;
 import com.devin.love.music.dao.v1.SingerDao;
 import com.devin.love.music.domain.entity.Album;
-import com.devin.love.music.domain.entity.Music;
 import com.devin.love.music.domain.entity.Singer;
 import com.devin.love.music.domain.vo.req.SingerReq;
-import com.devin.love.music.domain.vo.resp.AlbumInfoResp;
 import com.devin.love.music.domain.vo.resp.SingerInfoResp;
 import com.devin.love.music.service.v1.SingerService;
 import com.devin.love.music.service.v1.builder.SingerBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +28,6 @@ import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 2024/11/6 0:53

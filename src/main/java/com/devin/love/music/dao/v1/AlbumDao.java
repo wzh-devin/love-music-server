@@ -2,10 +2,7 @@ package com.devin.love.music.dao.v1;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.devin.love.music.domain.entity.Album;
-import com.devin.love.music.domain.vo.req.SingerReq;
-import com.devin.love.music.domain.vo.resp.AlbumInfoResp;
 import com.devin.love.music.mapper.v1.AlbumMapper;
-import com.devin.love.music.service.v1.builder.SingerBuilder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
