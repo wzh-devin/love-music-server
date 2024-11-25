@@ -32,6 +32,9 @@ public class AlbumInfoResp {
     @ApiModelProperty("专辑对应的歌手id")
     private Long singerId;
 
+    @ApiModelProperty("专辑对应歌手名")
+    private String singerName;
+
     @ApiModelProperty("专辑封面地址")
     private String albumPicUrl;
 

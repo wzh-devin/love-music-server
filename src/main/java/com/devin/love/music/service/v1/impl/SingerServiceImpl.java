@@ -67,18 +67,7 @@ public class SingerServiceImpl implements SingerService {
         }
 
         // 封装歌手信息
-        return singers.stream().map(singer -> {
-            // 查询歌手的专辑信息
-            List<Album> albumList = albumDao.getAlbumsBySingerIds(List.of(singer.getId()));
-            // 封装专辑信息
-            List<AlbumInfoResp> albumInfoRespList = albumList.stream().map(album -> {
-                AlbumInfoResp albumInfoResp = SingerBuilder.buildAlbumInfoResp(album);
-                // 查询专辑中的歌曲
-                albumInfoResp.setMusicTotal(musicDao.getMusicCount(album.getSingerId(), album.getId()));
-                return albumInfoResp;
-            }).toList();
-            return SingerBuilder.buildSingerInfoResp(singer, albumInfoRespList);
-        }).toList();
+        return singers.stream().map(SingerBuilder::buildSingerInfoResp).toList();
     }
 
     @Override

@@ -44,4 +44,12 @@ public class AlbumDao extends ServiceImpl<AlbumMapper, Album> {
                 .in(Album::getSingerId, singerIds)
                 .remove();
     }
+
+    /**
+     * 获取所有专辑信息
+     * @return
+     */
+    public List<Album> getAllAlbum() {
+        return lambdaQuery().list();
+    }
 }

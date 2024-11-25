@@ -22,7 +22,7 @@ import java.util.List;
  */
 public class SingerBuilder {
 
-    public static SingerInfoResp buildSingerInfoResp(Singer singer, List<AlbumInfoResp> albumInfoResp) {
+    public static SingerInfoResp buildSingerInfoResp(Singer singer) {
         return SingerInfoResp.builder()
                     .id(singer.getId())
                     .sex(singer.getSex())
@@ -32,11 +32,10 @@ public class SingerBuilder {
                     .birthday(singer.getBirthday())
                     .nationality(singer.getNationality())
                     .birthplace(singer.getBirthplace())
-                    .albums(albumInfoResp)
                     .build();
     }
 
-    public static AlbumInfoResp buildAlbumInfoResp(Album album) {
+    public static AlbumInfoResp buildAlbumInfoResp(Album album, Singer singer) {
         return AlbumInfoResp.builder()
                 .id(album.getId())
                 .singerId(album.getSingerId())
@@ -44,6 +43,7 @@ public class SingerBuilder {
                 .albumPicUrl(album.getAlbumPicUrl())
                 .releaseTime(album.getReleaseTime())
                 .description(album.getDescription())
+                .singerName(singer.getName())
                 .build();
     }
 

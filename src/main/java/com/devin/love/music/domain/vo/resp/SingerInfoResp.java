@@ -53,7 +53,4 @@ public class SingerInfoResp {
 
     @ApiModelProperty("歌手国籍")
     private String nationality;
-
-    @ApiModelProperty("歌手专辑列表")
-    private List<AlbumInfoResp> albums;
 }
