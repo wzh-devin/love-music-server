@@ -1,16 +1,23 @@
 package com.devin.love.music.service.v1.impl;
 
+import com.devin.love.music.common.constant.FilePath;
 import com.devin.love.music.common.enums.ExecuteStatusEnum;
+import com.devin.love.music.common.enums.FileTypeEnum;
+import com.devin.love.music.common.enums.ModuleName;
 import com.devin.love.music.common.exception.FileBusinessException;
 import com.devin.love.music.common.utils.AssertUtil;
 import com.devin.love.music.common.utils.SnowFlake;
 import com.devin.love.music.dao.v1.AlbumDao;
+import com.devin.love.music.dao.v1.FileDao;
 import com.devin.love.music.dao.v1.MusicDao;
 import com.devin.love.music.dao.v1.SingerDao;
 import com.devin.love.music.domain.entity.Album;
+import com.devin.love.music.domain.entity.FileInfo;
 import com.devin.love.music.domain.entity.Singer;
+import com.devin.love.music.domain.vo.req.FileInfoReq;
 import com.devin.love.music.domain.vo.req.SingerReq;
 import com.devin.love.music.domain.vo.resp.SingerInfoResp;
+import com.devin.love.music.service.v1.MinioService;
 import com.devin.love.music.service.v1.SingerService;
 import com.devin.love.music.service.v1.builder.SingerBuilder;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +29,8 @@ import org.springframework.util.DigestUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 /**
@@ -42,15 +46,12 @@ import java.util.*;
 @RequiredArgsConstructor
 public class SingerServiceImpl implements SingerService {
 
-    /**
-     * 上传头像的文件夹路径
-     */
-    public static final String UPLOAD_SINGER_AVATARS = "/upload/singer/avatars/";
-
-    private final HttpServletResponse response;
     private final SingerDao singerDao;
     private final AlbumDao albumDao;
     private final MusicDao musicDao;
+
+    private final MinioService minioService;
+    private final FileDao fileDao;
 
     @Override
     public List<SingerInfoResp> getSingerList() {
@@ -60,9 +61,15 @@ public class SingerServiceImpl implements SingerService {
             // 如果歌手为空，直接返回
             return null;
         }
-
-        // 封装歌手信息
-        return singers.stream().map(SingerBuilder::buildSingerInfoResp).toList();
+        // 查询歌手文件图片信息
+        return singers.stream().map(singer -> {
+//            FileInfo fileInfo = fileDao.getFileByModule(singer.getId(), ModuleName.SINGER.name());
+            String path = Optional.ofNullable(fileDao.getFileByModule(singer.getId(), ModuleName.SINGER.name()))
+                    .map(FileInfo::getPath)
+                    .map(String::toString)
+                    .orElse(null);
+            return SingerBuilder.buildSingerInfoResp(singer, path);
+        }).toList();
     }
 
     @Override
@@ -89,75 +96,88 @@ public class SingerServiceImpl implements SingerService {
         delSingerCommon(singerIds);
     }
 
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void uploadSingerPic(MultipartFile uploadFile, Long id) throws IOException {
-        // TODO 后续接入Minio技术，将图片上传到Minio
-        Singer singer = singerDao.getById(id);
-        try (InputStream is = uploadFile.getInputStream()) {
-            // 获取MD5值
-            String md5 = DigestUtils.md5DigestAsHex(is);
-            if (checkFileDuplicate(singer, md5)) return;
-            // 获取原始文件名
-            String[] originName = Objects.requireNonNull(uploadFile.getOriginalFilename()).split("\\.");
-            String prefix = originName[0];
-            String suffix = originName[originName.length - 1];
-            // 设置上传的文件名
-            String fileName = prefix + "_" + SnowFlake.nextId() + "." + suffix;
-            // 上传路径
-            File dirPath = new File(System.getProperty("user.dir") + UPLOAD_SINGER_AVATARS);
-            // 判断上传路径是否存在
-            if (!dirPath.exists()) dirPath.mkdirs();
-            // 将文件上传到此目录下
-            uploadFile.transferTo(new File(dirPath, fileName));
-            // 将文件信息存入到数据库
-            singer.setSingerPicUrl(fileName);
-            singer.setFileMd5(md5);
-            singerDao.updateById(singer);
-        } catch (Exception e) {
-            throw new FileBusinessException("文件上传异常" + e.getMessage());
-        }
-    }
+//    @Override
+//    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+//    public void uploadSingerPic(MultipartFile uploadFile, Long id) throws IOException {
+//        // TODO 后续接入Minio技术，将图片上传到Minio
+//        Singer singer = singerDao.getById(id);
+//        try (InputStream is = uploadFile.getInputStream()) {
+//            // 获取MD5值
+//            String md5 = DigestUtils.md5DigestAsHex(is);
+//            if (checkFileDuplicate(singer, md5)) return;
+//            // 获取原始文件名
+//            String[] originName = Objects.requireNonNull(uploadFile.getOriginalFilename()).split("\\.");
+//            String prefix = originName[0];
+//            String suffix = originName[originName.length - 1];
+//            // 设置上传的文件名
+//            String fileName = prefix + "_" + SnowFlake.nextId() + "." + suffix;
+//            // 上传路径
+//            File dirPath = new File(System.getProperty("user.dir") + UPLOAD_SINGER_AVATARS);
+//            // 判断上传路径是否存在
+//            if (!dirPath.exists()) dirPath.mkdirs();
+//            // 将文件上传到此目录下
+//            uploadFile.transferTo(new File(dirPath, fileName));
+//            // 将文件信息存入到数据库
+//            singer.setSingerPicUrl(fileName);
+//            singer.setFileMd5(md5);
+//            singerDao.updateById(singer);
+//        } catch (Exception e) {
+//            throw new FileBusinessException("文件上传异常" + e.getMessage());
+//        }
+//    }
+//
+//
+//    @Override
+//    public void downloadFile(String fileName) {
+//        // TODO 后续接入Minio技术，从Minio下载文件
+//        File file = new File(System.getProperty("user.dir") + UPLOAD_SINGER_AVATARS + fileName);
+//        if (!file.exists()) {
+//            throw new FileBusinessException("文件不存在");
+//        }
+//
+//        // 设置响应体
+//        response.setContentType("application/octet-stream");
+//        response.setCharacterEncoding("utf-8");
+//        response.setContentLength((int) file.length());
+//        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, StandardCharsets.UTF_8));
+//
+//        // 下载文件
+//        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file)); ServletOutputStream os = response.getOutputStream()) {
+//            byte[] buf = new byte[1024];
+//            int len = 0;
+//            while ((len = bis.read(buf)) != -1) {
+//                os.write(buf, 0, len);
+//            }
+//            os.flush();
+//            return; // 确保在写入文件内容后立即返回
+//        } catch (Exception e) {
+//            // 失败
+//            log.error("文件下载失败：{}", e.getMessage());
+//            throw new FileBusinessException(e.getMessage());
+//        }
+//    }
 
     /**
-     * 文件重复性检查
-     *
-     * @param singer
-     * @param fileMd5
+     * 调用minio服务，上传文件
+     * @param uploadFile
+     * @param id
      */
-    private boolean checkFileDuplicate(Singer singer, String fileMd5) {
-        // 判断md5值
-        return !ObjectUtils.isEmpty(singer.getFileMd5()) && singer.getFileMd5().equals(fileMd5);
-    }
-
     @Override
-    public void downloadFile(String fileName) {
-        // TODO 后续接入Minio技术，从Minio下载文件
-        File file = new File(System.getProperty("user.dir") + UPLOAD_SINGER_AVATARS + fileName);
-        if (!file.exists()) {
-            throw new FileBusinessException("文件不存在");
-        }
-
-        // 设置响应体
-        response.setContentType("application/octet-stream");
-        response.setCharacterEncoding("utf-8");
-        response.setContentLength((int) file.length());
-        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, StandardCharsets.UTF_8));
-
-        // 下载文件
-        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file)); ServletOutputStream os = response.getOutputStream()) {
-            byte[] buf = new byte[1024];
-            int len = 0;
-            while ((len = bis.read(buf)) != -1) {
-                os.write(buf, 0, len);
-            }
-            os.flush();
-            return; // 确保在写入文件内容后立即返回
-        } catch (Exception e) {
-            // 失败
-            log.error("文件下载失败：{}", e.getMessage());
-            throw new FileBusinessException(e.getMessage());
-        }
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void avatarUpload(MultipartFile uploadFile, Long id) throws IOException {
+        // 计算文件的MD5值
+        String md5 = DigestUtils.md5DigestAsHex(uploadFile.getInputStream());
+        // 构建文件信息
+        FileInfoReq fileInfoReq = FileInfoReq.builder()
+                .file(uploadFile)
+                .path(FilePath.AVATAR_PATH)
+                .md5(md5)
+                .belongModuleId(id)
+                .belongModuleName(ModuleName.SINGER.name())
+                .type(FileTypeEnum.IMAGE.name())
+                .originName(uploadFile.getOriginalFilename())
+                .build();
+        minioService.uploadFile(fileInfoReq);
     }
 
     /**

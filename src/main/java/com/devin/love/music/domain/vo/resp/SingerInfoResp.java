@@ -38,9 +38,6 @@ public class SingerInfoResp {
     @ApiModelProperty("歌手性别，0-女 1-男")
     private Integer sex;
 
-    @ApiModelProperty("歌手图片地址")
-    private String singerPicUrl;
-
     @ApiModelProperty("歌手生日")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
@@ -53,4 +50,7 @@ public class SingerInfoResp {
 
     @ApiModelProperty("歌手国籍")
     private String nationality;
+
+    @ApiModelProperty("歌手图片路径")
+    private String singerPicPath;
 }
