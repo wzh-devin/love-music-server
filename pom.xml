@@ -17,8 +17,8 @@
     <properties>
         <java.version>17</java.version>
         <mysql.version>8.0.33</mysql.version>
-        <mybatis.version>2.3.2</mybatis.version>
-        <mybatis-plus.version>3.5.1</mybatis-plus.version>
+        <!--        <mybatis.version>2.3.2</mybatis.version>-->
+        <mybatis-plus.version>3.5.9</mybatis-plus.version>
         <druid.version>1.2.21</druid.version>
         <hutool.version>5.8.26</hutool.version>
         <jwt.version>3.19.0</jwt.version>
@@ -75,23 +75,30 @@
         </dependency>
 
         <!-- mybatis-plus, mybatis -->
-        <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>${mybatis.version}</version>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>org.mybatis.spring.boot</groupId>-->
+        <!--            <artifactId>mybatis-spring-boot-starter</artifactId>-->
+        <!--            <version>${mybatis.version}</version>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>${mybatis-plus.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-generator</artifactId>
+            <version>3.5.9</version>
+        </dependency>
+
+        <!-- velocity模板依赖 -->
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version>1.7</version>
+        </dependency>
 
         <!-- druid连接池 -->
-        <!--        <dependency>-->
-        <!--            <groupId>com.alibaba</groupId>-->
-        <!--            <artifactId>druid-spring-boot-starter</artifactId>-->
-        <!--            <version>${druid.version}</version>-->
-        <!--        </dependency>-->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid-spring-boot-3-starter</artifactId>
@@ -104,6 +111,7 @@
             </exclusions>
         </dependency>
 
+        <!-- logback依赖 -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
@@ -131,6 +139,13 @@
             <version>${jwt.version}</version>
         </dependency>
 
+        <!-- common工具类 -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.16.1</version>
+        </dependency>
+
         <!-- knife4j接口文档依赖 -->
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
@@ -147,6 +162,13 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+        <!-- minio服务依赖 -->
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+            <version>8.3.0</version>
         </dependency>
     </dependencies>
 

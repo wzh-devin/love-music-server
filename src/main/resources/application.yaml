@@ -42,3 +42,9 @@ logging:
 
 jwt:
   secret: ${love-music.jwt.secret}
+
+minio:
+  access-key: ${love-music.minio.access-key}
+  secret-key: ${love-music.minio.secret-key}
+  endpoint: ${love-music.minio.endpoint}
+  bucket-name: ${love-music.minio.bucket-name}

@@ -51,11 +51,18 @@ public interface SingerService {
      * @param uploadFile
      * @param id
      */
-    void uploadSingerPic(MultipartFile uploadFile, Long id) throws IOException;
+    void avatarUpload(MultipartFile uploadFile, Long id) throws IOException;
 
-    /**
-     * 文件下载
-     * @param fileName
-     */
-    void downloadFile(String fileName);
+//    /**
+//     * 上传歌手头像
+//     * @param uploadFile
+//     * @param id
+//     */
+//    void uploadSingerPic(MultipartFile uploadFile, Long id) throws IOException;
+//
+//    /**
+//     * 文件下载
+//     * @param fileName
+//     */
+//    void downloadFile(String fileName);
 }

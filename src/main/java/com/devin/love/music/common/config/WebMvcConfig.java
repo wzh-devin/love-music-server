@@ -1,6 +1,7 @@
 package com.devin.love.music.common.config;
 
 import com.devin.love.music.common.annotation.ApiV1;
+import com.devin.love.music.common.annotation.ApiV2;
 import com.devin.love.music.common.constant.ExcludePath;
 import com.devin.love.music.common.constant.Version;
 import com.devin.love.music.common.interceptor.TokenInterceptor;
@@ -50,6 +51,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void configurePathMatch(PathMatchConfigurer configurer) {
         // 增加版本前缀
         configurer.addPathPrefix(Version.V1, a -> a.isAnnotationPresent(ApiV1.class));
+        configurer.addPathPrefix(Version.V2, a -> a.isAnnotationPresent(ApiV2.class));
     }
 
     @Override

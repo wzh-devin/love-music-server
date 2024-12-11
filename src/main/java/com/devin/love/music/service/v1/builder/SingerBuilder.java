@@ -17,17 +17,17 @@ import org.springframework.beans.BeanUtils;
  */
 public class SingerBuilder {
 
-    public static SingerInfoResp buildSingerInfoResp(Singer singer) {
+    public static SingerInfoResp buildSingerInfoResp(Singer singer, String singerPicPath) {
         return SingerInfoResp.builder()
-                    .id(singer.getId())
-                    .sex(singer.getSex())
-                    .name(singer.getName())
-                    .description(singer.getDescription())
-                    .singerPicUrl(singer.getSingerPicUrl())
-                    .birthday(singer.getBirthday())
-                    .nationality(singer.getNationality())
-                    .birthplace(singer.getBirthplace())
-                    .build();
+                .id(singer.getId())
+                .sex(singer.getSex())
+                .name(singer.getName())
+                .description(singer.getDescription())
+                .birthday(singer.getBirthday())
+                .nationality(singer.getNationality())
+                .birthplace(singer.getBirthplace())
+                .singerPicPath(singerPicPath)
+                .build();
     }
 
     public static AlbumInfoDto buildAlbumInfoResp(Album album, Singer singer) {

@@ -15,6 +15,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.DigestUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,8 +45,6 @@ import java.util.List;
 public class SingerController {
 
     private final SingerService singerService;
-
-    private final HttpServletResponse response;
 
     @GetMapping("/list")
     @ApiOperation("获取歌手列表")
@@ -83,20 +82,8 @@ public class SingerController {
     @Log(desc = "上传歌手头像", module = "歌手模块", version = Version.V1)
     public ApiResult<?> uploadSingerPic(@RequestParam("file") MultipartFile uploadFile,
                                            @RequestParam("id") Long id) throws IOException {
-        singerService.uploadSingerPic(uploadFile, id);
+        singerService.avatarUpload(uploadFile, id);
         return ApiResult.success();
     }
 
-    @GetMapping("/download/{fileName}")
-    @ApiOperation("文件下载")
-    @Log(desc = "歌手头像下载", module = "歌手模块", version = Version.V1)
-    public void downloadFile(@PathVariable("fileName") String fileName) throws IOException {
-        try {
-            singerService.downloadFile(fileName);
-        } catch (Exception e) {
-            // 手动向前端打入信息，防止将ApiResult对象转换为二进制，产生没有转换器的报错
-            log.error("File Download Error: {}", e.getMessage());
-            HttpErrorEnum.SYS_ERROR.sendHttpError(response);
-        }
-    }
 }

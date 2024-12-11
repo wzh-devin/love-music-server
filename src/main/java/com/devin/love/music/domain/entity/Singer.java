@@ -34,12 +34,6 @@ public class Singer {
     @TableField("sex")
     private Integer sex;
 
-    @TableField("singer_pic_url")
-    private String singerPicUrl;
-
-    @TableField("file_md5")
-    private String fileMd5;
-
     @TableField(value = "birthday")
     private LocalDate birthday;
 

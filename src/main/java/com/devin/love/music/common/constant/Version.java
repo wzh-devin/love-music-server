@@ -12,4 +12,5 @@ package com.devin.love.music.common.constant;
  */
 public class Version {
     public static final String V1 = "/api/v1";
+    public static final String V2 = "/api/v2";
 }
